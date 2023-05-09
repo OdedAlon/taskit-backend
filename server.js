@@ -38,27 +38,26 @@ app.all('*', setupAsyncLocalStorage)
 app.get('/api/setup-session', (req, res) => {
     req.session.connectedAt = Date.now()
     console.log('setup-session:', req.sessionID);
-    res.end()
+    res.end(req.sessionID)
 })
 
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/board', boardRoutes)
+//app.use('/api/')
 connectSockets(http, session)
 
 // Make every server-side-route to match the index.html
 // so when requesting http://localhost:3030/index.html/car/123 it will still respond with
 // our SPA (single page app) (the index.html file) and allow vue/react-router to take it from there
 app.get('/**', (req, res) => {
+    console.log('@@@')
     res.sendFile(path.join(__dirname, 'public', 'index.html'))
 })
 
 const logger = require('./services/logger.service')
 const port = process.env.PORT || 3030
 
-app.get('/**', (req, res) => { 
-    res.sendFile(path.join(__dirname, 'public', 'index.html'))
-}) 
 
 http.listen(port, () => { 
     console.log(`App listening on port ${port}!`) 
